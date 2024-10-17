@@ -1,0 +1,25 @@
+[project]
+name = "log-generator"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Daniel Różycki", email = "altosterino@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "loguru>=0.7.2",
+]
+
+[project.scripts]
+log-generator = "log_generator:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+dev-dependencies = [
+    "black>=24.10.0",
+    "ruff>=0.6.9",
+]

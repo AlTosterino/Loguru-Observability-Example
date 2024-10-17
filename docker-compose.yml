@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  log_generator:
+    build:
+      context: log_generator
+      dockerfile: Dockerfile
+    volumes:
+      - ./log_generator:/app
