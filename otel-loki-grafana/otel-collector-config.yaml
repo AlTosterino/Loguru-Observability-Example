@@ -1,0 +1,37 @@
+receivers:
+  filelog:
+    include:
+      - /app/logs/file_*.log
+    start_at: end
+    operators:
+      - type: json_parser
+
+processors:
+  attributes:
+    actions:
+      - action: insert
+        key: loki.attribute.labels
+        value: event.domain, event.name
+
+  resource:
+    attributes:
+      - action: insert
+        key: service_name
+        value: log-generator-service
+      - action: insert
+        key: loki.resource.labels
+        value: service_name
+      - action: insert
+        key: loki.format
+        value: json
+
+exporters:
+  otlphttp:
+    endpoint: http://loki:3100/otlp
+
+service:
+  pipelines:
+    logs:
+      receivers: [filelog]
+      processors: [attributes, resource]
+      exporters: [otlphttp]

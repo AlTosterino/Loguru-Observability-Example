@@ -6,5 +6,3 @@ WORKDIR /app
 COPY . /app
 RUN pip install --no-cache-dir uv
 RUN uv sync --frozen
-
-CMD uv run log-generator

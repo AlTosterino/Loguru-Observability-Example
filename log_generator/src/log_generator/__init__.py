@@ -1,9 +1,24 @@
 import random
+import sys
+from typing import Final
+
 from loguru import logger
 from datetime import datetime
 import uuid
 import time
 import threading
+
+STDOUT_FORMAT: Final[str] = (
+    "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level: <8}</level> | "
+    "<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>"
+    " | {extra}"
+)
+FILE_FORMAT: Final[str] = "{message}"
+
+
+logger.remove()
+logger.add(sys.stdout, colorize=True, format=STDOUT_FORMAT)
+logger.add("logs/file_{time}.log", format=FILE_FORMAT, rotation="1MB", serialize=True)
 
 # Simulated user actions
 user_actions = [
@@ -39,9 +54,7 @@ def generate_user_journey_logs(user_id):
             if action in ["View Product", "Add to Cart", "Search Product"]
             else None
         )
-        product_id = (
-            str(uuid.uuid4()) if category else None
-        )
+        product_id = str(uuid.uuid4()) if category else None
         duration = random.randint(1, 10)
         success = random.choices([True, False], weights=[80, 20], k=1)[0]
 
@@ -57,21 +70,15 @@ def generate_user_journey_logs(user_id):
         }
 
         if not success:
-            logger.bind(**log_context).error(
-                f"Action '{action}' failed for User ID {user_id}"
-            )
+            logger.bind(**log_context).error(f"Action '{action}' failed")
         elif duration > 8:
             logger.bind(**log_context).warning(
-                f"Action '{action}' took unusually long ({duration}s) for User ID {user_id}"
+                f"Action '{action}' took unusually long ({duration}s)"
             )
         elif action == "Checkout" and not success:
-            logger.bind(**log_context).critical(
-                f"Critical failure during checkout for User ID {user_id}"
-            )
+            logger.bind(**log_context).critical(f"Critical failure during checkout")
         else:
-            logger.bind(**log_context).info(
-                f"Action '{action}' completed successfully for User ID {user_id}"
-            )
+            logger.bind(**log_context).info(f"Action '{action}' completed successfully")
 
         time.sleep(random.uniform(0.5, 2.5))
 

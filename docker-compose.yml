@@ -7,3 +7,30 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./log_generator:/app
+      - ./logs:/app/logs
+    command: uv run log-generator
+
+  otel_collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel-loki-grafana/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+      - ./logs:/app/logs
+
+  loki:
+    image: grafana/loki:latest
+    ports:
+      - "3100:3100"  # Loki default port
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - ./otel-loki-grafana/loki-config.yaml:/etc/loki/local-config.yaml
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_USER=admin
+    volumes:
+      - ./grafana-provisioning:/etc/grafana/provisioning
