@@ -7,31 +7,31 @@ receivers:
       - type: json_parser
 
 processors:
-  attributes:
-    actions:
-      - action: insert
-        key: loki.attribute.labels
-        value: event.domain, event.name
-
   resource:
     attributes:
       - action: insert
-        key: service_name
-        value: log-generator-service
-      - action: insert
-        key: loki.resource.labels
-        value: service_name
+        key: service.name
+        value: log-generator
       - action: insert
         key: loki.format
         value: json
 
+#  transform:
+#    error_mode: ignore
+#    log_statements:
+#        - context: log
+#          statements:
+#            - set(attributes["name_of_the_service"], attributes["record"]["extra"]["service"])
+
 exporters:
   otlphttp:
     endpoint: http://loki:3100/otlp
+  debug:
+    verbosity: detailed
 
 service:
   pipelines:
     logs:
       receivers: [filelog]
-      processors: [attributes, resource]
-      exporters: [otlphttp]
+      processors: [resource]
+      exporters: [otlphttp, debug]
