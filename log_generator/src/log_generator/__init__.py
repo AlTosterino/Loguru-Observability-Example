@@ -56,7 +56,7 @@ def generate_user_journey_logs(user_id):
         )
         product_id = str(uuid.uuid4()) if category else None
         duration = random.randint(1, 10)
-        success = random.choices([True, False], weights=[80, 20], k=1)[0]
+        success = random.choices([True, False], weights=[95, 5], k=1)[0]
 
         log_context = {
             "user_id": user_id,
@@ -97,7 +97,7 @@ def main():
             user_id = str(uuid.uuid4())
             thread = threading.Thread(target=simulate_user_journey, args=(user_id,))
             threads.append(thread)
-            time.sleep(random.uniform(0.5, 4.5))
+            time.sleep(random.uniform(5, 15))
             thread.start()
 
         for thread in threads:

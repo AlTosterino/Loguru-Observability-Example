@@ -26,11 +26,11 @@ services:
       - ./otel-loki-grafana/loki-config.yaml:/etc/loki/local-config.yaml
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:11.3.0
     ports:
       - "3000:3000"
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
       - GF_SECURITY_ADMIN_USER=admin
     volumes:
-      - ./grafana-provisioning:/etc/grafana/provisioning
+      - ./otel-loki-grafana/grafana/provisioning:/etc/grafana/provisioning
